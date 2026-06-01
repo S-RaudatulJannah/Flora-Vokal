@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BLOOM SOCIALS - ASR & TTS Flora Dashboard</title>
+    <style>
+        /* Impor Font dari Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Outfit:wght@500;700;900&family=Alex+Brush&display=swap');
+
+        :root {
+            --dark-forest-green: #254117;
+            --muted-rose: #cd6184;
+            --soft-mustard-yellow: #ffbd59;
+            --sage-green: #97a273;
+            --light-blush-pink: #ffecf2;
+            --shadow-sm: 0 4px 12px rgba(37, 65, 23, 0.05);
+            --shadow-md: 0 10px 30px rgba(37, 65, 23, 0.08);
+            --shadow-lg: 0 16px 45px rgba(37, 65, 23, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        body {
+            background-color: #FAFBF9;
+            color: var(--dark-forest-green);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            /* Wallpaper bermotif bunga-bunga pastel yang lembut dan estetik */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg transform='translate(30, 30)' fill='%23cd6184' fill-opacity='0.08'%3E%3Ccircle cx='0' cy='-8' r='6'/%3E%3Ccircle cx='8' cy='0' r='6'/%3E%3Ccircle cx='0' cy='8' r='6'/%3E%3Ccircle cx='-8' cy='0' r='6'/%3E%3Ccircle cx='0' cy='0' r='5' fill='%23ffbd59' fill-opacity='0.1'/%3E%3C/g%3E%3Cg transform='translate(90, 90)' fill='%2397a273' fill-opacity='0.07'%3E%3Cpath d='M0,0 Q10,-10 20,-10 Q10,0 0,0 Q-10,10 -20,10 Q-10,0 0,0'/%3E%3C/g%3E%3Cg transform='translate(90, 30)' fill='%23ffbd59' fill-opacity='0.07'%3E%3Ccircle cx='0' cy='-6' r='5'/%3E%3Ccircle cx='6' cy='0' r='5'/%3E%3Ccircle cx='0' cy='6' r='5'/%3E%3Ccircle cx='-6' cy='0' r='5'/%3E%3Ccircle cx='0' cy='0' r='4' fill='%23cd6184' fill-opacity='0.08'/%3E%3C/g%3E%3Cg transform='translate(30, 90)' fill='%23cd6184' fill-opacity='0.06'%3E%3Ccircle cx='0' cy='-5' r='4'/%3E%3Ccircle cx='5' cy='0' r='4'/%3E%3Ccircle cx='0' cy='5' r='4'/%3E%3Ccircle cx='-5' cy='0' r='4'/%3E%3C/g%3E%3C/svg%3E");
+            background-repeat: repeat;
+            overflow-x: hidden;
+            /* Mencegah scrollbar horizontal akibat elemen melayang */
+        }
+
+        /* 3. DYNAMIC GLOWING BACKGROUND AURORA BLOBS */
+        .blob-bg {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -2;
+            opacity: 0.45;
+            pointer-events: none;
+        }
+
+        .blob-1 {
+            top: 5%;
+            left: 5%;
+            width: 320px;
+            height: 320px;
+            background-color: var(--light-blush-pink);
+        }
+
+        .blob-2 {
+            bottom: 15%;
+            right: 5%;
+            width: 380px;
+            height: 380px;
+            background-color: rgba(151, 162, 115, 0.35);
+            /* Sage green */
+        }
+
+        .blob-3 {
+            top: 45%;
+            left: 45%;
+            width: 350px;
+            height: 350px;
+            background-color: rgba(255, 189, 89, 0.22);
+            /* Mustard yellow */
+        }
+
+        /* Floating Leaves */
+        @keyframes float-slow {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-18px) rotate(6deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        @keyframes float-reverse {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(18px) rotate(-6deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+
+        .floating-leaf {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0.15;
+            z-index: -1;
+            fill: none;
+            stroke: var(--dark-forest-green);
+            stroke-width: 1.2;
+        }
+
+        .leaf-1 {
+            top: 15%;
+            left: 3%;
+            width: 110px;
+            animation: float-slow 9s ease-in-out infinite;
+        }
+
+        .leaf-2 {
+            bottom: 22%;
+            right: 4%;
+            width: 130px;
+            animation: float-reverse 11s ease-in-out infinite;
+        }
+
+        .leaf-3 {
+            top: 65%;
+            left: 2%;
+            width: 90px;
+            animation: float-reverse 10s ease-in-out infinite;
+        }
+
+        .leaf-4 {
+            top: 8%;
+            right: 8%;
+            width: 100px;
+            animation: float-slow 8s ease-in-out infinite;
+        }
+
+        /* 1. HEADER STYLING */
+        header {
+            background-color: var(--dark-forest-green);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .logo {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: 25px;
+            letter-spacing: 2px;
+            color: var(--muted-rose);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+        }
+
+        header .logo span {
+            color: var(--soft-mustard-yellow);
+        }
+
+        header nav {
+            display: flex;
+            gap: 25px;
+        }
+
+        header nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+            border-radius: 10px;
+        }
+
+        header nav a:hover {
+            color: var(--soft-mustard-yellow);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        header nav a.active {
+            background: rgba(205, 97, 132, 0.15);
+            color: var(--muted-rose);
+            border: 1px solid rgba(205, 97, 132, 0.3);
+        }
+
+        /* DASHBOARD LAYOUT */
+        .dashboard-container {
+            max-width: 1240px;
+            width: 100%;
+            margin: 35px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 30px;
+            flex: 1;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid rgba(37, 65, 23, 0.05);
+            padding: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: relative;
+        }
+
+        .card-header-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .panel-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 23px;
+            font-weight: 900;
+            color: var(--dark-forest-green);
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-subtitle {
+            font-size: 13px;
+            color: var(--dark-forest-green);
+            opacity: 0.75;
+            font-weight: 600;
+        }
+
+        /* 2. LEFT PANEL - ASR MODULE */
+        .panel-asr {
+            background-color: var(--light-blush-pink);
+            border: 1px solid rgba(205, 97, 132, 0.15);
+        }
+
+        /* Word List tags */
+        .word-list {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px dashed rgba(205, 97, 132, 0.4);
+            font-size: 13px;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .word-list-title {
+            font-weight: 800;
+            color: var(--dark-forest-green);
+            margin-bottom: 8px;
+            font-size: 12.5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .word-list span {
+            display: inline-block;
+            background: #FFFFFF;
+            border: 1px solid rgba(205, 97, 132, 0.15);
+            border-radius: 20px;
+            padding: 4px 11px;
+            margin: 3px;
+            font-weight: 700;
+            color: var(--muted-rose);
+            text-transform: capitalize;
+            box-shadow: 0 2px 4px rgba(37, 65, 23, 0.02);
+        }
+
+        /* Microphone rekam */
+        .mic-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px 0;
+            gap: 15px;
+        }
+
+        .btn-record {
+            background-color: var(--muted-rose);
+            color: white;
+            border: none;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            font-size: 40px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(205, 97, 132, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        .btn-record:hover {
+            transform: scale(1.08);
+            box-shadow: 0 12px 30px rgba(205, 97, 132, 0.45);
+        }
+
+        .btn-record.recording {
+            background-color: #e3557e;
+            animation: record-pulse 1.4s infinite;
+        }
+
+        @keyframes record-pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(227, 85, 126, 0.6);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(227, 85, 126, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(227, 85, 126, 0);
+            }
+        }
+
+        .status {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--dark-forest-green);
+            background: rgba(255, 255, 255, 0.6);
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(205, 97, 132, 0.1);
+        }
+
+        /* Transcription real-time output text area */
+        .transcription-container {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 22px;
+            border: 1px solid rgba(37, 65, 23, 0.06);
+            box-shadow: var(--shadow-sm);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .transcription-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transcription-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--sage-green);
+        }
+
+        .confidence-badge {
+            background-color: var(--sage-green);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 11.5px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(151, 162, 115, 0.2);
+        }
+
+        .predicted-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--dark-forest-green);
+            text-transform: capitalize;
+            letter-spacing: 0.5px;
+        }
+
+        /* MFCC Visualisasi */
+        .visualization-container {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(37, 65, 23, 0.06);
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .visualization-label {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--sage-green);
+        }
+
+        .spectrogram {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(37, 65, 23, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Bot Guess Card */
+        .bot-guess-card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 2px solid var(--soft-mustard-yellow);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .bot-guess-card::before {
+            content: "🌸 TEBAKAN BOT";
+            position: absolute;
+            top: -12px;
+            left: 24px;
+            background: var(--soft-mustard-yellow);
+            color: var(--dark-forest-green);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            padding: 3px 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(255, 189, 89, 0.3);
+            letter-spacing: 0.5px;
+        }
+
+        .flower-frame {
+            width: 100%;
+            height: 190px;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(37, 65, 23, 0.08);
+            margin-top: 5px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .flower-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .flower-photo:hover {
+            transform: scale(1.06);
+        }
+
+        .flower-script-name {
+            font-family: 'Alex Brush', cursive;
+            font-size: 46px;
+            color: var(--muted-rose);
+            margin: 12px 0 18px 0;
+            line-height: 1;
+            text-shadow: 1px 1px 0px #ffffff;
+        }
+
+        /* 3. RIGHT PANEL - TTS MODULE */
+        .panel-tts {
+            background-color: #ffffff;
+            border: 1px solid rgba(37, 65, 23, 0.05);
+        }
+
+        .tts-form {
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--dark-forest-green);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .input-label span {
+            color: var(--muted-rose);
+            font-size: 11px;
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 600;
+        }
+
+        .tts-textarea {
+            width: 100%;
+            height: 130px;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1.5px solid rgba(37, 65, 23, 0.12);
+            background: #FAFBF9;
+            color: var(--dark-forest-green);
+            font-size: 15px;
+            resize: none;
+            outline: none;
+            line-height: 1.55;
+            font-weight: 600;
+        }
+
+        .tts-textarea:focus {
+            border-color: var(--muted-rose);
+            background: #ffffff;
+            box-shadow: 0 0 0 4px rgba(205, 97, 132, 0.08);
+        }
+
+        /* Voice Toggle Custom selectors (Pill style) */
+        .pill-selector {
+            display: flex;
+            background: #FAFBF9;
+            padding: 5px;
+            border-radius: 14px;
+            border: 1.5px solid rgba(37, 65, 23, 0.08);
+        }
+
+        .pill-option {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            color: var(--dark-forest-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .pill-option.active {
+            background-color: var(--muted-rose);
+            color: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Custom Horizontal Speed Selector */
+        .speed-selector {
+            display: flex;
+            background: #FAFBF9;
+            padding: 5px;
+            border-radius: 14px;
+            border: 1.5px solid rgba(37, 65, 23, 0.08);
+        }
+
+        .speed-option {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            color: var(--dark-forest-green);
+            user-select: none;
+        }
+
+        .speed-option.active {
+            background-color: var(--dark-forest-green);
+            color: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ASR to TTS Route switch */
+        .integration-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--light-blush-pink);
+            padding: 18px 22px;
+            border-radius: 18px;
+            border: 1px solid rgba(205, 97, 132, 0.15);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .integration-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .integration-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--dark-forest-green);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .integration-desc {
+            font-size: 11.5px;
+            color: var(--dark-forest-green);
+            opacity: 0.7;
+            line-height: 1.3;
+        }
+
+        /* Toggle switch CSS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(37, 65, 23, 0.15);
+            transition: .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        input:checked+.slider {
+            background-color: var(--muted-rose);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Buttons Mustard & Outlined */
+        .btn-mustard {
+            background-color: var(--soft-mustard-yellow);
+            color: var(--dark-forest-green);
+            border: none;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 800;
+            font-size: 15px;
+            padding: 15px 30px;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 6px 18px rgba(255, 189, 89, 0.3);
+            outline: none;
+        }
+
+        .btn-mustard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 22px rgba(255, 189, 89, 0.4);
+        }
+
+        .btn-mustard:active {
+            transform: translateY(0);
+        }
+
+        .btn-mustard:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--dark-forest-green);
+            border: 2px solid rgba(37, 65, 23, 0.15);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            padding: 13px 25px;
+            border-radius: 14px;
+            cursor: pointer;
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            outline: none;
+        }
+
+        .btn-outline:hover {
+            background: rgba(37, 65, 23, 0.03);
+            border-color: var(--dark-forest-green);
+        }
+
+        .btn-outline:active {
+            transform: translateY(1px);
+        }
+
+        .btn-outline:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* TTS Audio Output Container */
+        .audio-output-container {
+            background: rgba(151, 162, 115, 0.12);
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid rgba(151, 162, 115, 0.22);
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            animation: slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .audio-output-label {
+            font-family: 'Outfit', sans-serif;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--dark-forest-green);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        audio {
+            width: 100%;
+            outline: none;
+            border-radius: 8px;
+        }
+
+        /* Tips */
+        .tips-container {
+            font-size: 11.5px;
+            color: var(--dark-forest-green);
+            background: rgba(151, 162, 115, 0.12);
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(151, 162, 115, 0.2);
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-forest-green);
+            color: rgba(255, 255, 255, 0.6);
+            text-align: center;
+            padding: 25px;
+            font-size: 13.5px;
+            font-family: 'Outfit', sans-serif;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: auto;
+        }
+
+        footer strong {
+            color: var(--soft-mustard-yellow);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--dark-forest-green);
+            color: #ffffff;
+            padding: 16px 26px;
+            border-radius: 14px;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: toast-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes toast-in {
+            from {
+                transform: translateY(80px) scale(0.85);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media(max-width: 950px) {
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- PREMIUM AURORA BLOBS -->
+    <div class="blob-bg blob-1"></div>
+    <div class="blob-bg blob-2"></div>
+    <div class="blob-bg blob-3"></div>
+
+    <!-- FLOATING BOTANICAL LEAF SVGS -->
+    <svg class="floating-leaf leaf-1" viewBox="0 0 24 24">
+        <path d="M2,21 Q12,12 22,2 M2,21 Q21,12 22,2 M2,21 L12,12 M12,12 L8,14 M12,12 L14,8 M17,7 L14,8 M7,17 L8,14" />
+    </svg>
+    <svg class="floating-leaf leaf-2" viewBox="0 0 24 24">
+        <path d="M2,21 Q12,12 22,2 M2,21 Q21,12 22,2 M2,21 L12,12 M12,12 L8,14 M12,12 L14,8 M17,7 L14,8 M7,17 L8,14" />
+    </svg>
+    <svg class="floating-leaf leaf-3" viewBox="0 0 24 24">
+        <path d="M2,21 Q12,12 22,2 M2,21 Q21,12 22,2 M2,21 L12,12 M12,12 L8,14 M12,12 L14,8 M17,7 L14,8 M7,17 L8,14" />
+    </svg>
+    <svg class="floating-leaf leaf-4" viewBox="0 0 24 24">
+        <path d="M2,21 Q12,12 22,2 M2,21 Q21,12 22,2 M2,21 L12,12 M12,12 L8,14 M12,12 L14,8 M17,7 L14,8 M7,17 L8,14" />
+    </svg>
+
+    <!-- 1. HEADER MODULE -->
+    <header>
+        <div class="logo">
+            🌺 flora <span>vokal</span>
+        </div>
+        <nav>
+            <a href="#" class="active">Dashboard</a>
+            <a href="https://github.com" target="_blank">Repositori</a>
+            <a href="#" onclick="showToast('Sistem ASR & TTS 100% Aktif & Siap Pakai! 🌸')">Status</a>
+        </nav>
+    </header>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <div class="dashboard-container">
+
+        <!-- 2. LEFT PANEL - ASR MODULE -->
+        <div class="card panel-asr">
+            <div class="card-header-group">
+                <div class="panel-title">🎙️ Modul ASR (Suara ke Teks)</div>
+                <div class="panel-subtitle">Rekam ucapan nama bunga Indonesia dan biarkan kecerdasan buatan mengenalinya
+                </div>
+            </div>
+
+            <!-- Kosa kata bunga yang didukung -->
+            <div class="word-list">
+                <div class="word-list-title">Kategori Bunga yang Dikenali:</div>
+                <div style="margin-top: 6px;">
+                    <span>alamanda</span> <span>anggrek</span> <span>dahlia</span> <span>krisan</span> <span>lily</span>
+                    <span>matahari</span> <span>mawar</span> <span>melati</span> <span>teratai</span> <span>tulip</span>
+                </div>
+            </div>
+
+            <!-- Bagian Mikrofon Utama -->
+            <div class="mic-section">
+                <button id="record-btn" class="btn-record">🎙️</button>
+                <div id="status-text" class="status">Siap merekam ucapan Anda...</div>
+            </div>
+
+            <!-- Tips ASR -->
+            <div class="tips-container">
+                💡 <strong>Tips Akurasi:</strong> Berikan jeda sekitar <strong>0.5 detik</strong> setelah tombol merekam
+                berwarna merah sebelum mulai berbicara, agar huruf konsonan awal Anda tidak terpotong oleh browser!
+            </div>
+
+            <!-- Interactive "Bot Guess" Card (Merged ASR Result) -->
+            <div id="bot-guess-box" class="bot-guess-card" style="margin-top: 15px;">
+                <div class="transcription-header"
+                    style="width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid rgba(255, 189, 89, 0.2); padding-bottom: 8px;">
+                    <span class="transcription-label"
+                        style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--sage-green);">Hasil
+                        Deteksi Suara</span>
+                    <span id="confidence-badge" class="confidence-badge">Confidence Score: 0%</span>
+                </div>
+                <div class="flower-frame">
+                    <img id="flower-photo" class="flower-photo" src="" alt="Tebakan Bunga">
+                </div>
+                <div id="flower-script-name" class="flower-script-name">Mawar</div>
+                <button id="confirm-btn" class="btn-mustard" style="max-width: 250px;">
+                    👍 KONFIRMASI TEBAKAN
+                </button>
+            </div>
+
+            <!-- Compact MFCC Heatmap Image Box -->
+            <div id="visualization-box" class="visualization-container" style="margin-top: 15px;">
+                <span class="visualization-label"
+                    style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--sage-green);">Sidik
+                    Jari Suara (MFCC Heatmap)</span>
+                <img id="spectrogram-img" class="spectrogram" src="" alt="MFCC Feature Visualisation Graph"
+                    style="width: 100%; max-height: 150px; object-fit: contain;">
+            </div>
+        </div>
+
+        <!-- 3. RIGHT PANEL - TTS MODULE -->
+        <div class="card panel-tts">
+            <div class="card-header-group">
+                <div class="panel-title">🔊 Modul TTS (Teks ke Suara)</div>
+                <div class="panel-subtitle">Ubah tulisan Bahasa Indonesia Anda menjadi suara manusia alami berteknologi
+                    Neural</div>
+            </div>
+
+            <div class="tts-form">
+
+                <!-- INPUT TEKS -->
+                <div class="input-group">
+                    <label class="input-label" for="tts-text">
+                        INPUT TEKS
+                        <span id="char-counter">0 / 200 karakter</span>
+                    </label>
+                    <textarea id="tts-text" class="tts-textarea" maxlength="200"
+                        placeholder="Ketikkan teks Bahasa Indonesia di sini... Contoh: Selamat datang di Taman Bunga Nusantara! Bunga melati dan mawar sedang mekar dengan sangat indah."></textarea>
+                </div>
+
+                <!-- INTEGRASI ASR -> TTS TOGGLE -->
+                <div class="integration-card">
+                    <div class="integration-info">
+                        <span class="integration-title">🔄 Integrasi ASR ➔ TTS</span>
+                        <span class="integration-desc">Otomatis kirim hasil deteksi bunga ASR ke TTS & putar
+                            suaranya</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="asr-tts-toggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <!-- GENDER SWITCH -->
+                <div class="input-group">
+                    <label class="input-label">PENGISI SUARA (GENDER)</label>
+                    <div class="pill-selector" id="gender-selector">
+                        <div class="pill-option active" data-gender="female">👩 Perempuan</div>
+                        <div class="pill-option" data-gender="male">👨 Laki-laki</div>
+                    </div>
+                </div>
+
+                <!-- SPEED SELECTOR -->
+                <div class="input-group">
+                    <label class="input-label">KECEPATAN BICARA</label>
+                    <div class="speed-selector" id="speed-selector">
+                        <div class="speed-option" data-speed="slow">🐌 Slow</div>
+                        <div class="speed-option active" data-speed="normal">🚶 Normal</div>
+                        <div class="speed-option" data-speed="fast">⚡ Fast</div>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+                    <button id="tts-play-btn" class="btn-mustard">
+                        <span>🔊</span> PUTAR SUARA
+                    </button>
+                    <button id="tts-save-btn" class="btn-outline" disabled>
+                        <span>📥</span> SIMPAN AUDIO (.MP3)
+                    </button>
+                </div>
+
+                <!-- AUDIO OUTPUT WIDGET -->
+                <div id="audio-output-box" class="audio-output-container">
+                    <div class="audio-output-label">
+                        🎵 Berkas Audio Hasil Sintesis
+                    </div>
+                    <audio id="tts-audio-player" controls src=""></audio>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">
+        <span id="toast-icon">🌸</span>
+        <span id="toast-text">Pesan Toast</span>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        Dibuat secara presisi untuk <strong>BLOOM SOCIALS</strong> &copy; 2026. Didukung oleh teknologi Kecerdasan
+        Buatan SVM & Edge-TTS Neural.
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // DOM Elements ASR
+        const recordBtn = document.getElementById("record-btn");
+        const statusText = document.getElementById("status-text");
+        const confidenceBadge = document.getElementById("confidence-badge");
+        const visualizationBox = document.getElementById("visualization-box");
+        const spectrogramImg = document.getElementById("spectrogram-img");
+
+        // Bot Guess Elements
+        const botGuessBox = document.getElementById("bot-guess-box");
+        const flowerPhoto = document.getElementById("flower-photo");
+        const flowerScriptName = document.getElementById("flower-script-name");
+        const confirmBtn = document.getElementById("confirm-btn");
+
+        // DOM Elements TTS
+        const ttsText = document.getElementById("tts-text");
+        const charCounter = document.getElementById("char-counter");
+        const asrTtsToggle = document.getElementById("asr-tts-toggle");
+        const genderSelector = document.getElementById("gender-selector");
+        const speedSelector = document.getElementById("speed-selector");
+        const ttsPlayBtn = document.getElementById("tts-play-btn");
+        const ttsSaveBtn = document.getElementById("tts-save-btn");
+        const audioOutputBox = document.getElementById("audio-output-box");
+        const ttsAudioPlayer = document.getElementById("tts-audio-player");
+
+        // Toast Elements
+        const toast = document.getElementById("toast");
+        const toastText = document.getElementById("toast-text");
+        const toastIcon = document.getElementById("toast-icon");
+
+        // Media Recorder State
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+
+        // TTS State
+        let activeGender = "female";
+        let activeSpeed = "normal";
+        let lastGeneratedAudioUrl = "";
+
+        // Unsplash Realistic Flower Images Mapping
+        const flowerImages = {
+            "alamanda": "https://images.unsplash.com/photo-1700529115243-0084627ad03c?w=500&q=80&auto=format&fit=crop",
+            "anggrek": "https://images.unsplash.com/photo-1605996370592-b6f7a81e382e?w=500&q=80&auto=format&fit=crop",
+            "dahlia": "https://images.unsplash.com/photo-1727375408986-c29acb3d5f50?w=500&q=80&auto=format&fit=crop",
+            "krisan": "https://images.unsplash.com/photo-1580642178672-699fd3c0f399?w=500&q=80&auto=format&fit=crop",
+            "lily": "https://images.unsplash.com/photo-1502977249166-824b3a8a4d6d?w=500&q=80&auto=format&fit=crop",
+            "matahari": "https://images.unsplash.com/photo-1597848212624-a19eb35e2651?w=500&q=80&auto=format&fit=crop",
+            "mawar": "https://images.unsplash.com/photo-1496062031456-07b8f162a322?w=500&q=80&auto=format&fit=crop",
+            "melati": "https://images.unsplash.com/photo-1612380635121-411eda9ecbb9?w=500&q=80&auto=format&fit=crop",
+            "teratai": "https://plus.unsplash.com/premium_photo-1664303754150-7a776a1f28bd?w=500&q=80&auto=format&fit=crop",
+            "tulip": "https://images.unsplash.com/photo-1561181226-e8a7edd504c6?w=500&q=80&auto=format&fit=crop"
+        };
+
+        // --- TOAST HELPER ---
+        function showToast(message, icon = "🌸") {
+            toastText.textContent = message;
+            toastIcon.textContent = icon;
+            toast.style.display = "flex";
+            setTimeout(() => {
+                toast.style.animation = "none";
+                toast.offsetHeight; // Trigger reflow
+                toast.style.animation = null;
+            }, 10);
+
+            // Auto hide after 4 seconds
+            if (window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => {
+                toast.style.display = "none";
+            }, 4000);
+        }
+
+        // --- 1. ASR RECORDING LOGIC ---
+        recordBtn.addEventListener("click", async () => {
+            if (!isRecording) {
+                audioChunks = [];
+                try {
+                    // Minta mic tanpa filter perusak sinyal suara
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        audio: {
+                            echoCancellation: false,
+                            noiseSuppression: false,
+                            autoGainControl: false
+                        }
+                    });
+
+                    let mimeType = 'audio/webm';
+                    if (!MediaRecorder.isTypeSupported(mimeType)) {
+                        mimeType = 'audio/ogg';
+                    }
+
+                    mediaRecorder = new MediaRecorder(stream, { mimeType: mimeType });
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) {
+                            audioChunks.push(event.data);
+                        }
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: mimeType });
+                        stream.getTracks().forEach(track => track.stop()); // Matikan mic
+
+                        await uploadAndPredict(audioBlob);
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    recordBtn.classList.add("recording");
+                    statusText.textContent = "Sedang Merekam... Ucapkan nama bunga!";
+                    statusText.style.color = "#cd6184";
+
+                    // Sembunyikan panel hasil rekam sebelumnya agar tidak mengganggu transisi
+                    visualizationBox.style.display = "none";
+                    botGuessBox.style.display = "none";
+                } catch (err) {
+                    console.error("Akses mikrofon gagal:", err);
+                    showToast("Gagal mengakses mikrofon! Periksa izin browser.", "❌");
+                    statusText.textContent = "Eror mikrofon! Periksa izin browser.";
+                }
+            } else {
+                mediaRecorder.stop();
+                isRecording = false;
+                recordBtn.classList.remove("recording");
+                statusText.textContent = "Rekaman selesai. Menganalisis gelombang...";
+                statusText.style.color = "#254117";
+            }
+        });
+
+        // Kirim Rekaman ke FastAPI
+        async function uploadAndPredict(audioBlob) {
+            const formData = new FormData();
+            formData.append("file", audioBlob, "rekaman.webm");
+
+            try {
+                const res = await fetch("/api/asr/predict", {
+                    method: "POST",
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    const flower = data.predicted_class;
+                    const confidenceVal = Math.round(data.confidence * 100);
+
+                    // Tampilkan visualisasi MFCC jika dikirim oleh API
+                    if (data.mfcc_image) {
+                        spectrogramImg.src = data.mfcc_image;
+                        visualizationBox.style.display = "flex";
+                    }
+
+                    // Tampilkan "Bot Guess" Card dengan gambar bunga realistis & nilai transkripsi
+                    if (flowerImages[flower.toLowerCase()]) {
+                        flowerPhoto.src = flowerImages[flower.toLowerCase()];
+                    } else {
+                        // Gambar fallback floral
+                        flowerPhoto.src = "https://images.unsplash.com/photo-1463936575829-25148e1db1b8?w=500&q=80";
+                    }
+                    flowerScriptName.textContent = flower;
+                    confidenceBadge.textContent = `Confidence Score: ${confidenceVal}%`;
+                    botGuessBox.style.display = "flex";
+
+                    statusText.textContent = `Deteksi Sukses: "${flower}"!`;
+                    showToast(`Bunga terdeteksi: ${flower.toUpperCase()} (${confidenceVal}%)`, "🌸");
+
+                    // Rute otomatis hasil ASR ke TTS jika diaktifkan
+                    if (asrTtsToggle.checked) {
+                        const templateText = `Bunga yang baru saja dideteksi adalah bunga ${flower}.`;
+                        ttsText.value = templateText;
+                        updateCharCounter();
+                        showToast(`ASR terintegrasi! Menyintesis teks suara otomatis...`, "🔄");
+                        await generateSpeechAndPlay(templateText);
+                    }
+                } else {
+                    statusText.textContent = `Gagal mendeteksi: ${data.message}`;
+                    showToast(data.message, "⚠️");
+                }
+            } catch (err) {
+                console.error("Gagal mengirim file ke server:", err);
+                statusText.textContent = "Koneksi ke server terputus!";
+                showToast("Eror: Gagal menghubungkan audio ke server!", "❌");
+            }
+        }
+
+        // Konfirmasi Tebakan Bunga
+        confirmBtn.addEventListener("click", () => {
+            const flowerName = flowerScriptName.textContent;
+            showToast(`Tebakan bunga ${flowerName.toUpperCase()} terkonfirmasi! Terima kasih.`, "🎉");
+        });
+
+
+        // --- 2. TTS FUNCTIONALITY LOGIC ---
+
+        // Counter karakter textarea
+        function updateCharCounter() {
+            const len = ttsText.value.length;
+            charCounter.textContent = `${len} / 200 karakter`;
+        }
+        ttsText.addEventListener("input", updateCharCounter);
+
+        // Pengisi Suara (Gender) Selector
+        const genderOptions = genderSelector.querySelectorAll(".pill-option");
+        genderOptions.forEach(opt => {
+            opt.addEventListener("click", () => {
+                genderOptions.forEach(x => x.classList.remove("active"));
+                opt.classList.add("active");
+                activeGender = opt.getAttribute("data-gender");
+                showToast(`Suara diatur ke: ${activeGender === 'female' ? 'Perempuan (Gadis)' : 'Laki-laki (Ardi)'}`);
+            });
+        });
+
+        // Kecepatan Bicara Selector
+        const speedOptions = speedSelector.querySelectorAll(".speed-option");
+        speedOptions.forEach(opt => {
+            opt.addEventListener("click", () => {
+                speedOptions.forEach(x => x.classList.remove("active"));
+                opt.classList.add("active");
+                activeSpeed = opt.getAttribute("data-speed");
+                showToast(`Kecepatan suara diatur ke: ${activeSpeed.toUpperCase()}`);
+            });
+        });
+
+        // Sintesis & Putar Suara (TTS)
+        async function generateSpeechAndPlay(textOverride = "") {
+            const textToSynthesize = textOverride || ttsText.value.trim();
+            if (!textToSynthesize) {
+                showToast("Silakan ketikkan teks terlebih dahulu!", "⚠️");
+                return;
+            }
+
+            ttsPlayBtn.disabled = true;
+            const originalBtnContent = ttsPlayBtn.innerHTML;
+            ttsPlayBtn.innerHTML = `<span>⏳</span> Sedang Menyintesis...`;
+
+            try {
+                // Fetch dari API endpoint /api/tts
+                const url = `/api/tts?text=${encodeURIComponent(textToSynthesize)}&gender=${activeGender}&speed=${activeSpeed}`;
+                const res = await fetch(url);
+                const data = await res.json();
+
+                if (data.success) {
+                    lastGeneratedAudioUrl = data.audio_url;
+
+                    // Hubungkan berkas audio hasil sintesis ke pemutar
+                    ttsAudioPlayer.src = data.audio_url;
+                    audioOutputBox.style.display = "flex";
+
+                    // Putar audio secara otomatis
+                    ttsAudioPlayer.play();
+
+                    // Aktifkan tombol simpan berkas
+                    ttsSaveBtn.disabled = false;
+
+                    showToast("Suara berhasil disintesis & diputar!", "🔊");
+                } else {
+                    showToast("Gagal memproses sintesis suara.", "⚠️");
+                }
+            } catch (err) {
+                console.error("Gagal terhubung ke API TTS:", err);
+                showToast("Eror: Gagal menghubungi server TTS!", "❌");
+            } finally {
+                ttsPlayBtn.disabled = false;
+                ttsPlayBtn.innerHTML = originalBtnContent;
+            }
+        }
+
+        ttsPlayBtn.addEventListener("click", () => generateSpeechAndPlay());
+
+        // Menyimpan / Mengunduh Berkas Audio
+        ttsSaveBtn.addEventListener("click", () => {
+            if (!lastGeneratedAudioUrl) return;
+
+            // Buat elemen jangkar unduhan sementara
+            const a = document.createElement("a");
+            a.href = lastGeneratedAudioUrl;
+
+            // Format nama file unduhan yang cantik
+            const filename = `bloom_socials_tts_${Date.now()}.mp3`;
+            a.download = filename;
+
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+
+            showToast(`Berkas audio berhasil disimpan sebagai: ${filename}`, "📥");
+        });
+
+        // Peringatan awal saat sistem berjalan
+        window.addEventListener("load", () => {
+            showToast("Selamat datang di BLOOM SOCIALS ASR & TTS Dashboard! 🌸");
+        });
+    </script>
+</body>
+
+</html>
