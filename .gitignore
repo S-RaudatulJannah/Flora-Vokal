@@ -1,0 +1,25 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+ENV/local/
+ENV/sentinel/
+
+# Media and temporary directories
+temp/
+static/outputs/*
+!static/outputs/.gitkeep
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Test outputs
+*.mp3
+scratch/
