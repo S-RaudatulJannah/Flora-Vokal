@@ -1,10 +1,10 @@
 # FloraVokal: ASR & TTS Flora Dashboard
 
-FloraVokal adalah aplikasi web interaktif untuk klasifikasi suara ucapan nama bunga Indonesia (Automatic Speech Recognition - ASR) secara real-time dan sintesis suara alami (Text-to-Speech - TTS) menggunakan kecerdasan buatan.
+FloraVokal adalah aplikasi web interaktif untuk klasifikasi suara ucapan nama bunga Indonesia (Automatic Speech Recognition - ASR) secara real-time dan sintesis suara alami (Text-to-Speech - TTS)
 
 ## Fitur Utama
 
-- **Real-Time ASR**: Merekam ucapan nama bunga melalui mikrofon browser dan mengklasifikasikannya ke dalam 10 kategori bunga menggunakan model klasifikasi (SVM/MLP).
+- **Real-Time ASR**: Merekam ucapan nama bunga melalui mikrofon browser dan mengklasifikasikannya ke dalam 10 kategori bunga menggunakan model klasifikasi (SVM).
 - **MFCC Visualizer**: Menampilkan sidik jari akustik suara berupa matriks 2D Mel-Frequency Cepstral Coefficients (MFCC) dalam bentuk heatmap.
 - **Neural TTS**: Mengubah teks Bahasa Indonesia menjadi ucapan suara alami (pria/wanita) dengan kontrol tempo kecepatan menggunakan Microsoft Edge TTS.
 - **Integrasi ASR ➔ TTS**: Menghubungkan hasil prediksi ASR secara langsung untuk disintesis kembali oleh modul TTS secara otomatis.
